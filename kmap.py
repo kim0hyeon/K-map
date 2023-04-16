@@ -42,22 +42,22 @@ for i in range(1, 5):
             left = k_map[i][j - 1]
             right = k_map[i][j + 1]
 
-            check_row_idx_head = i
-            check_row_idx_tail = i+1
-            check_col_idx_head = j
-            check_col_idx_tail = j+1
+            row_head_num = i
+            row_tail_num = i+1
+            col_head_num = j
+            col_tail_num = j+1
 
-            if up == 1 : check_row_idx_head -= 1
-            if down == 1 : check_row_idx_tail += 1
+            if up == 1 : row_head_num -= 1
+            if down == 1 : row_tail_num += 1
             if up == 1 and down == 1 :
-                check_row_idx_head = 0
-                check_row_idx_tail = 5
+                row_head_num = 0
+                row_tail_num = 5
 
-            if left == 1 : check_col_idx_head -= 1
-            if right == 1 : check_col_idx_tail += 1
+            if left == 1 : col_head_num -= 1
+            if right == 1 : col_tail_num += 1
             if left == 1 and right == 1 :
-                check_col_idx_head = 0
-                check_col_idx_tail = 5
+                col_head_num = 0
+                col_tail_num = 5
 
             term = []
 
@@ -69,34 +69,34 @@ for i in range(1, 5):
                 continue
 
             # 위에서 하나라도 주위에 1이 발견될 경우 이 if문은 실행될 수 없다.
-            if (check_row_idx_head == (check_row_idx_tail-1) and check_col_idx_head == (check_col_idx_tail-1)) and (up == 2 or down == 2 or left == 2 or right == 2):
-                if up == 2 : check_row_idx_head -= 1
-                if down == 2 : check_row_idx_tail += 1
+            if (row_head_num == (row_tail_num-1) and col_head_num == (col_tail_num-1)) and (up == 2 or down == 2 or left == 2 or right == 2):
+                if up == 2 : row_head_num -= 1
+                if down == 2 : row_tail_num += 1
                 if up == 2 and down == 2 :
-                    if check_row_idx_tail == 5:
-                        check_row_idx_head -= 1
+                    if row_tail_num == 5:
+                        row_head_num -= 1
                     else:
-                        check_row_idx_tail += 1
+                        row_tail_num += 1
 
-                if left == 2 : check_col_idx_head -= 1
-                if right == 2 : check_col_idx_tail += 1
+                if left == 2 : col_head_num -= 1
+                if right == 2 : col_tail_num += 1
                 if left == 2 and right == 2 :
-                    if check_col_idx_tail == 5:
-                        check_col_idx_head -= 1
+                    if col_tail_num == 5:
+                        col_head_num -= 1
                     else:
-                        check_col_idx_tail += 1
+                        col_tail_num += 1
 
             # 반복문을 돌면서 해당하는 인덱스가 1이나 2인지를 확인한다. 만약 아니라면 False로 바꾼다.
             all_idx_is_one_or_two = True
-            for a in range(check_row_idx_head, check_row_idx_tail):
-                for b in range(check_col_idx_head, check_col_idx_tail):
+            for a in range(row_head_num, row_tail_num):
+                for b in range(col_head_num, col_tail_num):
                     if k_map[a][b] == 0:
                         all_idx_is_one_or_two = False
 
             # 반복문을 모두 돌았음에도 True인 경우, 즉 선택한 인덱스가 모두 1이나 2인 경우 term_list에 추가한다.
             if all_idx_is_one_or_two:
-                for a in range(check_row_idx_head, check_row_idx_tail):
-                    for b in range(check_col_idx_head, check_col_idx_tail):
+                for a in range(row_head_num, row_tail_num):
+                    for b in range(col_head_num, col_tail_num):
                         k_map[a][b] = 2 # 한번 선택됐으니 또다시 꼭 선택될 필요가 없으므로 2로 바꿔준다.(나중에 필요할 수도 있음)
                         if a == 0 : k_map[4][b] = 2
                         if b == 0 : k_map[a][4] = 2
@@ -104,9 +104,105 @@ for i in range(1, 5):
 
                 term_list.append(term)
 
-                print(term_list)
-                for line in k_map: print(line)
-                print()
+# k_map에 1이 남아있는지 확인한다. 남아있으면 1이 사라질때까지 반복문을 반복한다.
+while True:
+    one_count = 0
+    for line in k_map[1:5]:
+        for number in line[1:5]:
+            if number == 1: one_count += 1
+
+    if one_count == 0 : break
+
+    for i in range(1, 5):
+        for j in range(1, 5):
+            if k_map[i][j] == 1:
+                term = []
+
+                up = k_map[i - 1][j]
+                down = k_map[i + 1][j]
+                left = k_map[i][j - 1]
+                right = k_map[i][j + 1]
+
+                row_head_num = i
+                row_tail_num = i+1
+                col_head_num = j
+                col_tail_num = j+1
+
+                side_list = [up,down,left,right]
+
+                if side_list.count(1) == 2:
+                    side = side_list.index(1)
+                    if side == 0: row_head_num -= 1
+                    elif side == 1: row_tail_num += 1
+                    elif side == 2: col_head_num -= 1
+                    else : col_tail_num += 1
+
+                    for a in range(row_head_num, row_tail_num):
+                        for b in range(col_head_num, col_tail_num):
+                            k_map[a][b] = 2 # 한번 선택됐으니 또다시 꼭 선택될 필요가 없으므로 2로 바꿔준다.(나중에 필요할 수도 있음)
+                            if a == 0 : k_map[4][b] = 2
+                            if b == 0 : k_map[a][4] = 2
+                            term.append(idx_list[a][b])
+
+                    term_list.append(term)
+
+                else:
+                    if up == 1 : row_head_num -= 1
+                    if down == 1 : row_tail_num += 1
+                    if up == 1 and down == 1 :
+                        row_head_num = 0
+                        row_tail_num = 5
+
+                    if left == 1 : col_head_num -= 1
+                    if right == 1 : col_tail_num += 1
+                    if left == 1 and right == 1 :
+                        col_head_num = 0
+                        col_tail_num = 5
+
+                    term = []
+
+                    # 상,하,좌,우 모두 0인경우 자기자신만 추가하고 k_map에서 제거한 뒤 term_list에 집어넣는다.
+                    if up == 0 and down == 0 and left == 0 and right == 0:
+                        term.append(idx_list[i][j])
+                        term_list.append(term)
+                        k_map[i][j] = 2
+                        continue
+
+                    # 위에서 하나라도 주위에 1이 발견될 경우 이 if문은 실행될 수 없다.
+                    if (row_head_num == (row_tail_num-1) and col_head_num == (col_tail_num-1)) and (up == 2 or down == 2 or left == 2 or right == 2):
+                        if up == 2 : row_head_num -= 1
+                        if down == 2 : row_tail_num += 1
+                        if up == 2 and down == 2 :
+                            if row_tail_num == 5:
+                                row_head_num -= 1
+                            else:
+                                row_tail_num += 1
+
+                        if left == 2 : col_head_num -= 1
+                        if right == 2 : col_tail_num += 1
+                        if left == 2 and right == 2 :
+                            if col_tail_num == 5:
+                                col_head_num -= 1
+                            else:
+                                col_tail_num += 1
+
+                    # 반복문을 돌면서 해당하는 인덱스가 1이나 2인지를 확인한다. 만약 아니라면 False로 바꾼다.
+                    all_idx_is_one_or_two = True
+                    for a in range(row_head_num, row_tail_num):
+                        for b in range(col_head_num, col_tail_num):
+                            if k_map[a][b] == 0:
+                                all_idx_is_one_or_two = False
+
+                    # 반복문을 모두 돌았음에도 True인 경우, 즉 선택한 인덱스가 모두 1이나 2인 경우 term_list에 추가한다.
+                    if all_idx_is_one_or_two:
+                        for a in range(row_head_num, row_tail_num):
+                            for b in range(col_head_num, col_tail_num):
+                                k_map[a][b] = 2 # 한번 선택됐으니 또다시 꼭 선택될 필요가 없으므로 2로 바꿔준다.(나중에 필요할 수도 있음)
+                                if a == 0 : k_map[4][b] = 2
+                                if b == 0 : k_map[a][4] = 2
+                                term.append(idx_list[a][b])
+
+                        term_list.append(term)
 
 
 #모든 반복이 끝났으면 해당하는 term들을 출력한다.
