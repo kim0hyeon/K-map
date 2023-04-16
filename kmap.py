@@ -20,8 +20,8 @@ term_idx = [["A'","B'","C'","D'"],["A'","B'","C'","D",],["A'","B'","C","D'"],["A
             ["A","B'","C'","D'"],["A","B'","C'","D"],["A","B'","C","D'"],["A","B'","C","D"],
             ["A","B","C'","D'"],["A","B","C'","D"],["A","B","C","D'"],["A","B","C","D"]]
 
-# term의 idx_list의 index를 input으로 받는다.
-input_term_list = list(map(int, input().split()))
+# term의 idx_list의 index를 input으로 받는다. 입력: 1,2,3,4,5...
+input_term_list = list(map(int, input().split(',')))
 input_term_list.sort()
 
 # 일반 term은 1로 저장, don't care term은 2로 저장
