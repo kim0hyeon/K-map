@@ -20,23 +20,15 @@ term_idx = [["A'","B'","C'","D'"],["A'","B'","C'","D",],["A'","B'","C","D'"],["A
             ["A","B'","C'","D'"],["A","B'","C'","D"],["A","B'","C","D'"],["A","B'","C","D"],
             ["A","B","C'","D'"],["A","B","C'","D"],["A","B","C","D'"],["A","B","C","D"]]
 
-# term과 dc_term모두 idx_list의 index를 input으로 받는다.
+# term의 idx_list의 index를 input으로 받는다.
 input_term_list = list(map(int, input().split()))
 input_term_list.sort()
-input_dc_term_list = list(map(int, input().split()))
-input_dc_term_list.sort()
 
-# 일반 term은 1로 저장
+# 일반 term은 1로 저장, don't care term은 2로 저장
 for idx in input_term_list:
     for i in range(6):
         for j in range(6):
             if idx_list[i][j] == idx: k_map[i][j] = 1
-
-# don't care term은 2로 저장
-for idx in input_dc_term_list:
-    for i in range(6):
-        for j in range(6):
-            if idx_list[i][j] == idx: k_map[i][j] = 2
 
 # 짝 지어지는 term들을 모을 리스트
 term_list = []
@@ -58,13 +50,14 @@ for i in range(1, 5):
             if up == 1 : check_row_idx_head -= 1
             if down == 1 : check_row_idx_tail += 1
             if up == 1 and down == 1 :
-                if check_row_idx_head == 0: check_row_idx_tail += 1
-                else : check_row_idx_head -= 1
+                check_row_idx_head = 0
+                check_row_idx_tail = 5
+
             if left == 1 : check_col_idx_head -= 1
             if right == 1 : check_col_idx_tail += 1
             if left == 1 and right == 1 :
-                if check_col_idx_head == 0: check_col_idx_tail += 1
-                else : check_col_idx_head -= 1
+                check_col_idx_head = 0
+                check_col_idx_tail = 5
 
             term = []
 
@@ -111,61 +104,10 @@ for i in range(1, 5):
 
                 term_list.append(term)
 
-# 1이 아직 남아있는지 확인한다. 남아있는경우 사라질때까지 반복해야한다.
-no_more_one = True
-for i in range(1,5):
-    for j in range(1,5):
-        if k_map[i][j] == 1:
-            no_more_one = False
-            break
+                print(term_list)
+                for line in k_map: print(line)
+                print()
 
-    if not no_more_one: break
-
-#다시 한번씩 돌면서 할 수 있는 최대한을 만든다.
-while not no_more_one:
-    for i in range(1,5):
-        for j in range(1,5):
-            if k_map[i][j] == 1:
-
-                up = k_map[i - 1][j]
-                down = k_map[i + 1][j]
-                left = k_map[i][j - 1]
-                right = k_map[i][j + 1]
-
-                check_row_idx_head = i
-                check_row_idx_tail = i+1
-                check_col_idx_head = j
-                check_col_idx_tail = j+1
-
-            if 0 < up < 3 : check_row_idx_head -= 1
-            if 0 < down < 3 : check_row_idx_tail += 1
-            if 0 < up < 3 and 0 < down < 3 :
-                if check_row_idx_head == 0: check_row_idx_tail += 1
-                else : check_row_idx_head -= 1
-
-            if 0 < left < 3 : check_col_idx_head -= 1
-            if 0 < right < 3 : check_col_idx_tail += 1
-            if 0 < left < 3 and 0 < right < 3 :
-                if check_col_idx_head == 0: check_col_idx_tail += 1
-                else : check_col_idx_head -= 1
-
-            # 반복문을 돌면서 해당하는 인덱스가 1이나 2인지를 확인한다. 만약 아니라면 False로 바꾼다.
-            all_idx_is_one_or_two = True
-            for a in range(check_row_idx_head, check_row_idx_tail):
-                for b in range(check_col_idx_head, check_col_idx_tail):
-                    if k_map[a][b] == 0:
-                        all_idx_is_one_or_two = False
-
-            # 반복문을 모두 돌았음에도 True인 경우, 즉 선택한 인덱스가 모두 1이나 2인 경우 term_list에 추가한다.
-            if all_idx_is_one_or_two:
-                for a in range(check_row_idx_head, check_row_idx_tail):
-                    for b in range(check_col_idx_head, check_col_idx_tail):
-                        k_map[a][b] = 2 # 한번 선택됐으니 또다시 꼭 선택될 필요가 없으므로 2로 바꿔준다.(나중에 필요할 수도 있음)
-                        if a == 0 : k_map[4][b] = 2
-                        if b == 0 : k_map[a][4] = 2
-                        term.append(idx_list[a][b])
-
-                term_list.append(term)
 
 #모든 반복이 끝났으면 해당하는 term들을 출력한다.
 final2 = []
@@ -203,11 +145,3 @@ for words in final2[1:]:
     print('+',end="")
     for word in words:
         print(word,end="")
-
-
-
-
-
-
-
-
